@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OceanLink Maritime Operations</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body { background-color: #0d1b2a; color: #e0e1dd; padding: 20px; }
+.card { background-color: #1b263b; border: none; margin-bottom: 20px; }
+.card-header { background-color: #415a77; font-weight: bold; }
+table { color: #e0e1dd; }
+h1 { color: #00b4d8; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1 class="mb-4">🌊 OceanLink Maritime Operations Portal</h1>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Vessel Tracking</div>
+      <div class="card-body">
+        <table class="table table-dark table-striped">
+          <thead><tr><th>ID</th><th>Name</th><th>Location</th><th>Status</th></tr></thead>
+          <tbody id="vesselTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Cargo Tracking</div>
+      <div class="card-body">
+        <table class="table table-dark table-striped">
+          <thead><tr><th>Container</th><th>Cargo</th><th>Destination</th><th>Status</th></tr></thead>
+          <tbody id="cargoTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Weather Monitoring</div>
+      <div class="card-body">
+        <table class="table table-dark table-striped">
+          <thead><tr><th>Location</th><th>Temp</th><th>Wind</th><th>Condition</th></tr></thead>
+          <tbody id="weatherTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Analytics</div>
+      <div class="card-body text-light" id="analyticsBody">Loading...</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const BASE = ''; // will use nginx reverse proxy paths
+
+fetch('/api/vessels').then(r => r.json()).then(data => {
+  document.getElementById('vesselTable').innerHTML = data.map(v =>
+    `<tr><td>${v.id}</td><td>${v.name}</td><td>${v.location}</td><td>${v.status}</td></tr>`).join('');
+});
+
+fetch('/api/cargo').then(r => r.json()).then(data => {
+  document.getElementById('cargoTable').innerHTML = data.map(c =>
+    `<tr><td>${c.container}</td><td>${c.cargo}</td><td>${c.destination}</td><td>${c.status}</td></tr>`).join('');
+});
+
+fetch('/api/weather').then(r => r.json()).then(data => {
+  document.getElementById('weatherTable').innerHTML = data.map(w =>
+    `<tr><td>${w.location}</td><td>${w.temperature}</td><td>${w.wind_speed}</td><td>${w.condition}</td></tr>`).join('');
+});
+
+fetch('/api/analytics').then(r => r.json()).then(data => {
+  document.getElementById('analyticsBody').innerHTML = `
+    <p>Total Ships: ${data.total_ships}</p>
+    <p>Active Cargo: ${data.active_cargo}</p>
+    <p>Delayed Shipments: ${data.delayed_shipments}</p>
+    <p>Fuel Consumption: ${data.fuel_consumption}</p>
+  `;
+});
+</script>
+</body>
+</html>
