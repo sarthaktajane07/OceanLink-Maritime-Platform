@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vessel-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vessel-service
+  template:
+    metadata:
+      labels:
+        app: vessel-service
+    spec:
+      containers:
+      - name: vessel-service
+        image: sarthaktajane07/oceanlink-vessel-service:v1
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vessel-service
+spec:
+  selector:
+    app: vessel-service
+  ports:
+  - port: 5000
+    targetPort: 5000
+  type: ClusterIP
